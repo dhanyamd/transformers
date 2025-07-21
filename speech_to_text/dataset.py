@@ -9,6 +9,7 @@ from tokenizers.processors import TemplateProcessing
 from pathlib import Path
 import sounddevice as sd 
 
+
 def collatee_fn(batch):
     max_audio_len = max([item["audio"].shape[0] for item in batch])
     max_ids_len = 0 
@@ -74,7 +75,7 @@ class CommonVoiceDataset(Dataset):
         ].upper() 
         if self.tokenizer: 
             encoded = self.tokenizer.encode(text) 
-            return {"auido": waveform, "text": text, "input_ids": encoded.ids}
+            return {"audio": waveform, "text": text, "input_ids": encoded.ids}
 def get_dataset(batch_size=32, num_examples=None, num_workers=4): 
     dataset = datasets.load_dataset(
     "m-aliabbas/idrak_timit_subsample1",
@@ -87,3 +88,20 @@ def get_dataset(batch_size=32, num_examples=None, num_workers=4):
         tokenizer=tokenizer,
         num_examples=num_examples
     )
+    datasetloader = DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        collatee_fn=collatee_fn,
+        num_workers=num_workers
+    )
+    return datasetloader
+if __name__ == "__main__": 
+    dataloader = get_dataset(batch_size=32)
+    for batch in dataloader: 
+        audio = batch["audio"] 
+        input_ids = batch["input_ids"]
+        print(audio.shape)
+        print(input_ids.shape)
+        breakpoint()
+        break
