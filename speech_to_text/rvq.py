@@ -22,7 +22,7 @@ class VectorQuantizer(nn.Module):
         ) #p=2 for euclidean distance 
 
         #Encoding: closest embedding 
-        encoding_indices = torch.argim(distances, dim=1)
+        encoding_indices = torch.argmin(distances, dim=1)
         quantized = self.embedding(encoding_indices).view(
             batch_size, sequence_length, embedding_dim
         )

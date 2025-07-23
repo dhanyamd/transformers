@@ -36,8 +36,8 @@ class AttentionLayer(nn.Module):
         query = self.query_dense(embeddings) 
         key = self.key_dense(embeddings) 
         value = self.value_dense(embeddings) 
-        attention, _ = calculate_attention(query, key, value)
-        return attention
+        attention, attention_scores = calculate_attention(query, key, value)
+        return attention, attention_scores
     
 class MultiHeadAttention(nn.Module):
     def __init__(self, embed_size, num_heads):
@@ -89,9 +89,9 @@ class SinusoidalPositionalEncoding(nn.Module):
         super().__init__() 
         position = torch.arange(max_seq_length).unsqueeze(1) 
         div_term = torch.exp(torch.arange(0, embed_size, 2) * (-math.log(1000.0) / embed_size))
-        pe = torch.zeros(20, embed_size) 
+        pe = torch.zeros(max_seq_length, embed_size)  # <-- FIXED HERE
         pe[:, 0::2] = torch.sin(position * div_term) 
-        pe[:, 1:: 2] = torch.cos(position * div_term) 
+        pe[:, 1::2] = torch.cos(position * div_term) 
         self.register_buffer('position_embedding', pe)
     def forward(self, x: torch.Tensor): 
         return x + self.position_embedding[:x.size(1), :] 
@@ -110,7 +110,7 @@ class Transformer(nn.Module):
     def forward(self, x: torch.Tensor):
         x = self.positional_encoding(x)
         for transformer_block in self.transformer_blocks:
-            x = transformer_block(x)
+            x, _ = transformer_block(x)  # Unpack and pass only the tensor output
         return x
 
 
