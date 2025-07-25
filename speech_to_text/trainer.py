@@ -15,7 +15,7 @@ vq_warmup_steps = 1000
 vq_final_loss_weight = 0.5 
 num_epochs = 1000 
 starting_steps = 0
-num_examples = 100 
+num_examples = 1000 
 model_id = "test37"
 num_batch_repeats = 1 
 
@@ -84,9 +84,11 @@ def main():
     else:
         model = TranscribeModel(
             num_codebooks=2,
-            codebook_size=32,
-            embedding_dim=16,
+            codebook_size=64,
+            embedding_dim=64,
             num_transformer_layers=2,
+            strides=[6, 8, 4, 2],
+            intial_mean_pooling_kernel_size=4,
             vocab_size=len(tokenizer.get_vocab())
         ).to(device)
     num_trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -95,6 +97,7 @@ def main():
 
     dataloader = get_dataset(
         batch_size=BATCH_SIZE,
+        
         num_examples=num_examples,
         num_workers=1 
     )

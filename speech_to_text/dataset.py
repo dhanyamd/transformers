@@ -92,7 +92,7 @@ def get_dataset(batch_size=32, num_examples=None, num_workers=4):
         dataset,
         batch_size=batch_size,
         shuffle=True,
-        collatee_fn=collatee_fn,
+        collate_fn=collatee_fn, # <--- Corrected to collate_fn (with one 'l' and no 'e' at the end)
         num_workers=num_workers
     )
     return datasetloader
