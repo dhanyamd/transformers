@@ -49,7 +49,7 @@ class TranscribeModel(nn.Module):
         # x: (batch_size, seq_len) -> unsqueeze(1) -> (batch_size, 1, seq_len)
         x = x.unsqueeze(1) 
         
-        # DownsamplingNetwork output: (batch_size, embedding_dim, downsampled_seq_len)
+        # DownsamplingNetwork output: (batch_size, embedding_dim, downsampled_seq_len) 
         # Note: DownsamplingNetwork already transposes at the end to (B, T, D)
         x = self.downsampling_network(x)
         
